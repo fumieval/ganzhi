@@ -1,0 +1,50 @@
+#hands {
+  display: flex;
+}
+
+.card {
+  height: 16em;
+  width: 12em;
+  background: #fff0e2;
+  margin: 0.5em;
+  text-align: center;
+}
+
+.card img {
+  max-width: 100%;
+  max-height: 50%;
+}
+
+.cost {
+  height: 1.5em;
+  width: 1.5em;
+  border-radius: 50%;
+  text-align:center;
+  line-height: 1.5em;
+  vertical-align: middle;
+  display: inline-block;
+  background: #a04040;
+  color: white;
+  font-size: 1em;
+}
+
+.card h3 {
+  padding: 0.25em;
+  color: #494949;
+  background: #fffaf4;
+  border-left: solid 5px #ffaf58;
+  font-size: 1.2em;
+  text-align: left;
+  margin-top: 0;
+}
+
+.card-description {
+  background: white;
+  padding: 0.5em;
+  margin-top: auto;
+  margin-bottom: 1em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  font-size: 0.7em;
+  height: auto;
+}

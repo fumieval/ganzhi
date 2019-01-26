@@ -1,0 +1,40 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <link rel="stylesheet" type="text/css" href="/main.css">
+</head>
+<body>
+  <div id="player">
+    <div>
+      Library: {{ game.playerState.playerLib.length }}
+    </div>
+    <div id="hands">
+      <div class="card" v-for="i in game.playerState.playerHand">
+        <h3>
+          <span class="cost">
+            {{ allCards[i].cost }}
+          </span>
+          {{ allCards[i].name }}
+        </h3>
+        <img v-bind:src="'/img/' + allCards[i].image">
+        <div class="card-description">{{ allCards[i].description }}</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    getJSON("/api/cards", function(allCards){
+      getJSON("/api/game", function(gs){
+        var player = new Vue({
+          el: '#player',
+          data: {
+            allCards: allCards
+            , game: gs
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
