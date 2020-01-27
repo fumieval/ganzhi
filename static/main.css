@@ -2,6 +2,13 @@
   display: flex;
 }
 
+#player {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 20em;
+}
+
 .card {
   height: 16em;
   width: 12em;

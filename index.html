@@ -3,28 +3,39 @@
   <meta charset="utf-8">
   <script src="/main.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="//cdn.jsdelivr.net/emojione/2.2.7/lib/js/emojione.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/css/emojione.min.css">
   <link rel="stylesheet" type="text/css" href="/main.css">
 </head>
 <body>
   <div id="player">
     <div>
-      Library: {{ game.playerState.playerLib.length }}
+     Library: {{ game.playerState.playerLib.length }}
     </div>
     <div id="hands">
-      <div class="card" v-for="i in game.playerState.playerHand">
-        <h3>
-          <span class="cost">
-            {{ allCards[i].cost }}
-          </span>
-          {{ allCards[i].name }}
-        </h3>
-        <img v-bind:src="'/img/' + allCards[i].image">
-        <div class="card-description">{{ allCards[i].description }}</div>
-      </div>
+      <card v-bind:info="allCards[i]" v-for="i in game.playerState.playerHand"></card>
+    </div>
+    <div>
+      Graveyard: {{ game.playerState.playerGrave.length }}
     </div>
   </div>
   <script>
     getJSON("/api/cards", function(allCards){
+      Vue.component('')
+      Vue.component('card', {
+        props: ['info'],
+        template:
+          `<div class="card">
+            <h3>
+              <span class="cost">
+                {{ info.cost }}
+              </span>
+              {{ info.name }}
+            </h3>
+            <img v-bind:src="'/img/' + info.image">
+            <div class="card-description">{{ info.description }}</div>
+          </div>`
+      });
       getJSON("/api/game", function(gs){
         var player = new Vue({
           el: '#player',

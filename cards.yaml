@@ -1,54 +1,7 @@
 0:
-  name: 甲子 二十日鼠
+  name:
   cost: 1
   image: "nezumi_marathon.png"
   description: 毎ターン、カードを追加で1ドローする。
-  effect: []
-1:
-  name: 乙丑 踏ん張り
-  cost: 1
-  image: "toushi_bear_bull.png"
-  description: このターン、ダメージを半減する。
-  effect: []
-2:
-  name: 丙寅 捕食
-  cost: 1
-  image: "animal_tora.png"
-  description: 8ダメージを与える。HPを3回復する。
-  effect: []
-3:
-  name: 丁卯 出っ歯
-  cost: 0
-  image: "animal_usagi_brown.png"
-  description: 2ダメージを2回与える。
-  effect: []
-4:
-  name: 戊辰 逆鱗
-  cost: 3
-  image: "dragon_kotatsu.png"
-  description: 受けたダメージの分だけ、1ターンの間攻撃力を増加させる。
-  effect: []
-5:
-  name: 己巳 絡み付き
-  cost: 2
-  image: "hebi_pink.png"
-  description: カードをプレイするたび、1ダメージを与える。
-  effect: []
-6:
-  name: 庚午 拍車
-  cost: 1
-  image: "animal_horse_thoroughbred_brown.png"
-  description: カードを3枚ドローする。
-  effect: []
-7:
-  name: 辛未 包囲
-  cost: 1
-  image: "clone_hitsuji.png"
-  description: このターン、相手は4枚までしかプレイできない。
-  effect: []
-8:
-  name: 壬申 洗浄
-  cost: 2
-  image: "cooking11_arau.png"
-  description: 自身のデバフを消去する。
+  flavour:
   effect: []

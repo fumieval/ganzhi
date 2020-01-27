@@ -1,42 +1,53 @@
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
-module Main where
-
-import Control.Concurrent
+import Graphics.Holz
 import Control.Monad
+import Linear
+import Graphics.Holz.Shader
+import qualified Graphics.Holz.Shader.Simple as S
+import Data.Function (fix)
+import qualified View as V
+import qualified View.Shader as V
+import Control.Concurrent
 import Control.Monad.IO.Class
-import Web.Scotty
-import Network.Wai.Middleware.Static hiding ((<|>))
-import qualified Data.Map.Strict as M
-import Data.Yaml
-import System.Random
-
+import Control.Monad.Trans.Class
+import Model
 import Types
-
-main :: IO ()
-main = do
-  definedCards <- decodeFileThrow "cards.yaml"
-  let allCards = definedCards
-        `M.union` M.fromList [(i, placeholder i) | i <- map CardId [0..59]]
-
-  vGame <- newEmptyMVar
-  _ <- forkIO $ forever $ do
-    gen <- newStdGen
-    _ <- tryTakeMVar vGame
-    putMVar vGame $ initialGame gen
-    threadDelay 1000000
-  scotty 8880 $ mainApp Env{..}
+import Data.List (zipWith, repeat)
 
 data Env = Env
-  { vGame :: MVar (GameState StdGen)
-  , allCards :: M.Map CardId CardInfo
+  { eWindow :: !Window
+  , eShader :: !(Shader S.ModelProj S.Vertex)
+  , eView :: V.Env
   }
 
-mainApp :: Env -> ScottyM ()
-mainApp Env{..} = do
-  middleware $ unsafeStaticPolicy (addBase "static")
-  get "/" $ file "index.html"
-  get "/api/cards" $ json allCards
-  get "/api/game" $ do
-    gs <- liftIO $ readMVar vGame
-    json $ () <$ gs
+instance V.HasEnv Env where getEnv = eView
+instance HasWindow Env where getWindow = eWindow
+instance HasShader Env where
+  type ShaderUniform Env = S.ModelProj
+  type ShaderVertex Env = S.Vertex
+  getShader = eShader
+
+testCards :: [Entity Card]
+testCards = zipWith (\i -> Entity (EID i)) [0..] (repeat testCard) where
+  testCard = Card "Test" 1 ENone
+
+main :: IO ()
+main = withHolz $ do
+  win <- openWindow Resizable (Box (V2 0 0) (V2 1024 768))
+  sh <- makeShader V.vertexShaderSource V.fragmentShaderSource
+  void $ V.acquire $ \envV -> flip runReaderT (Env win sh envV) $ do
+
+    retract $ runHolz $ fix `flip` 0 `flip` V.hand $ \self t dh -> do
+      box@(Box (V2 x0 y0) (V2 x1 y1)) <- getBoundingBox
+      setViewport box
+      S.setProjection $ ortho x0 x1 y1 y0 (-1) 1
+
+      lift $ V.drawBackground box
+
+      dh' <- stepComponent testCards dh
+
+      liftIO $ threadDelay 16000
+      delay $ self (t + 1) dh'
