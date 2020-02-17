@@ -2,6 +2,7 @@
 module View where
 
 import Graphics.Holz
+import qualified Graphics.Holz.Typeset as Text
 import qualified Graphics.Holz.Shader.Simple as S
 import Control.Monad.Trans.Cont
 import Control.Monad.IO.Class
@@ -18,7 +19,12 @@ data Env = Env
   { gameBg :: Texture
   , cardBg :: Texture
   , cardFrame :: VertexBuffer S.Vertex
+  , cardFont :: Text.Typeset
+  , sampleText :: Text.Renderable S.Vertex
   }
+
+instance Text.FromV2 S.Vertex where
+  fromV2 (V2 x y) uv = S.Vertex (V3 x y 0) (V4 1 1 1 1) uv
 
 class HasEnv a where
   getEnv :: a -> Env
@@ -31,6 +37,9 @@ acquire = runContT $ do
   cardBg <- liftIO (readImageRGBA8 "resources/card-template.png") >>= registerTexture
   cardFrame <- ContT $ uncurry withVertex
     $ S.rectangle (V4 1 1 1 1) (V2 (-180) (-240)) (V2 180 240)
+  font <- readFont "/System/Library/Fonts/LucidaGrande.ttc"
+  cardFont <- Text.createTypeset font 64
+  sampleText <- Text.string cardFont "Hello, haskellers"
   return Env{..}
 
 drawBackground :: (S.HasSimpleShader r, MonadHolz r m, HasEnv r, MonadUnliftIO m) => Box V2 Float -> m ()
@@ -73,6 +82,8 @@ hand = Component
             | pure (First i) == focus = S.translate (t *^ V3 0 (-60) 1) !*! mat !*! scaled (V4 k k k 1)
             | otherwise = mat
       S.drawVertex mat' cardBg cardFrame
+      Text.draw mat' sampleText
+
     return (focus', elapsed')
   , cExpose = fst
   }

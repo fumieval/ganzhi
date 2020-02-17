@@ -5,11 +5,7 @@
 module View.Shader where
 
 import Graphics.Holz
-import Control.Monad
-import Linear
-import Graphics.Holz.Shader
 import Graphics.Holz.Shader.Simple as S
-import Data.Function (fix)
 import qualified Text.RawString.QQ as QQ
 
 vertexShaderSource :: VertexShaderSource ModelProj Vertex Fragment

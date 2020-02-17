@@ -6,13 +6,16 @@ import Graphics.Holz
 import Control.Monad
 import Linear
 import Graphics.Holz.Shader
+import Graphics.Holz.Font
 import qualified Graphics.Holz.Shader.Simple as S
 import Data.Function (fix)
 import qualified View as V
 import qualified View.Shader as V
+import qualified Graphics.Holz.Typeset as Text
 import Control.Concurrent
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Class
+import Control.Monad.Reader
 import Model
 import Types
 import Data.List (zipWith, repeat)
@@ -31,7 +34,7 @@ instance HasShader Env where
   getShader = eShader
 
 testCards :: [Entity Card]
-testCards = zipWith (\i -> Entity (EID i)) [0..] (repeat testCard) where
+testCards = zipWith (\i -> Entity (EID i)) [0..6] (repeat testCard) where
   testCard = Card "Test" 1 ENone
 
 main :: IO ()
@@ -48,6 +51,11 @@ main = withHolz $ do
       lift $ V.drawBackground box
 
       dh' <- stepComponent testCards dh
+
+      r <- ask
+      liftIO $ uncurry withVertex (S.rectangle (pure 1) (V2 0 0) (V2 640 480))
+        $ \v -> runReaderT (S.drawVertex identity (Text.atlas $ V.cardFont envV) v) r
+
 
       liftIO $ threadDelay 16000
       delay $ self (t + 1) dh'
